@@ -17,9 +17,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/test', 'ControllerTesting@index');
+Route::get('/mainpage', 'ControllerTesting@index');
+Route::post('/search', 'ControllerTesting@search');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/mainpage', 'SearchController@index');
-Route::post('/search', 'SearchController@search');
+// Route::get('/mainpage', 'SearchController@index');
+// Route::post('/search', 'SearchController@search');

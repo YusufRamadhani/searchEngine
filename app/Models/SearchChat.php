@@ -27,7 +27,7 @@ class SearchChat extends Model
         $this->tfIdf = new TfIDF();
     }
 
-    function search($queryTerm, $indexTerm, $date = null)
+    function search($queryTerm, $indexTerm)
     {
         $vectorQuery = $this->tfIdf->getQueryTfIdf($queryTerm);
         $vectorDocuments = $this->tfIdf->getDocumentTfIdf($queryTerm, $indexTerm);

@@ -51,7 +51,6 @@ class TfIDF
 
     function getDocumentTfIdf(array $queryTerm, array $indexTerm)
     {
-
         $Tf =  $this->TF->TermFrequenciesDocument($indexTerm, $queryTerm);
         $Idf =  $this->getIDF($queryTerm);
         $indexTFIDF = array();

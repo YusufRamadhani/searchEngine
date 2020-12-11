@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\Libraries\PreProcessText;
 use App\Models\SearchChat;
 use App\Models\IndexTerm;
-use App\Services\SearchService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use DateInterval;
+use DatePeriod;
+
 
 class SearchController extends Controller
 {
@@ -20,11 +21,13 @@ class SearchController extends Controller
     3. memanggil hal login admin
     */
 
-    private $searchService, $preProcessText, $indexTerm, $search;
+    private $preProcessText, $indexTerm, $search;
 
-    public function __construct(SearchService $searchService)
+    public function __construct()
     {
-        $this->searchService = $searchService;
+        $this->preProcessText = new PreProcessText();
+        $this->indexTerm = new IndexTerm();
+        $this->search = new SearchChat();
     }
 
     function index()
@@ -35,18 +38,38 @@ class SearchController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $startDate = $request->input('start');
-        $endDate = $request->input('end');
-
-        $this->preProcessText = new PreProcessText();
-        $this->indexTerm = new IndexTerm();
-        $this->search = new SearchChat();
+        $dateRange = $this->dateRange($request);
 
         $queryTerm = $this->preProcessText->PreProcessText($query);
+
         $indexTerm = $this->indexTerm->getIndexTerm();
 
         $result = $this->search->search($queryTerm, $indexTerm);
 
-        return view('testing', compact('result'));
+        /*langkah - langkah proses:
+        1. mengambil dokumen berdasarkan tanggal
+        2. buat BoW dari doc tsb
+        3. selanjutnya sama dengan method search
+
+        $indexTermWithinPeriod = this->indexTerm->indexTermWithinPeriod($periodChat)
+        */
+
+        return view('mainpage', compact('result'));
+    }
+
+    public function dateRange(Request $request)
+    {
+        /*
+        dateRange = [
+            m-d-Y
+        ]
+        */
+
+        $startDate = date_create_from_format("m-d-Y", $request->input('start'));
+        $endDate = date_create_from_format("m-d-Y", $request->input('end'));
+        $interval = new DateInterval('P1D');
+        $periodChat = new DatePeriod($startDate, $interval, $endDate);
+
+        return $periodChat;
     }
 }
