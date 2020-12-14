@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Libraries\CosineSimilarity;
-use App\Libraries\TermWeighter\TfIDF;
+use App\Libraries\TermWeighter\TfIdf;
 
 
 class SearchChat extends Model
@@ -24,7 +24,7 @@ class SearchChat extends Model
     function __construct()
     {
         $this->cosineSimilarity = new CosineSimilarity();
-        $this->tfIdf = new TfIDF();
+        $this->tfIdf = new TfIdf();
     }
 
     function search($queryTerm, $indexTerm)

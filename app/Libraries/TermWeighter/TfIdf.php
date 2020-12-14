@@ -6,7 +6,7 @@ use App\Libraries\TermWeighter\TermFrequencies;
 use App\Libraries\TermWeighter\InverseDocumentFrequencies;
 use App\Models\IndexTerm;
 
-class TfIDF
+class TfIdf
 {
     /*
     class ini akan menghasilkan 2 index yaitu index tfidf document dan tfidf query
