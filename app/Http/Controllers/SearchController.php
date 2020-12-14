@@ -38,14 +38,15 @@ class SearchController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $dateRange = $this->dateRange($request);
-
+        $dateRange = null;
+        if (null !== $request->input('start')) {
+            $dateRange = $this->dateRange($request);
+            $indexTerm = $this->indexTerm->getIndexTermWithinPeriod($dateRange);
+        } else {
+            $indexTerm = $this->indexTerm->getIndexTerm();
+        }
         $queryTerm = $this->preProcessText->PreProcessText($query);
-
-        $indexTerm = $this->indexTerm->getIndexTerm();
-
         $result = $this->search->search($queryTerm, $indexTerm);
-
         /*langkah - langkah proses:
         1. mengambil dokumen berdasarkan tanggal
         2. buat BoW dari doc tsb
