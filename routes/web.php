@@ -14,13 +14,22 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('mainpage');
 });
 
-Route::get('/mainpage', 'ControllerTesting@index');
-Route::post('/search', 'ControllerTesting@search');
+// Route::get('/mainpage', 'ControllerTesting@index');
+// Route::post('/search', 'ControllerTesting@search');
 
-Route::get('/home', 'HomeController@index')->name('home');
+//Route::get('/home', 'HomeController@index')->name('home');
 
-// Route::get('/mainpage', 'SearchController@index');
-// Route::post('/search', 'SearchController@search');
+Route::get('/mainpage', 'SearchController@index');
+Route::post('/search', 'SearchController@search');
+
+//Route::get('/home', 'HomeController@index')->name('home');
+
+Route::prefix('admin')->group(function () {
+    Route::get('/login', 'Auth\AdminLoginController@showLoginForm')->name('admin.login');
+    Route::post('/login', 'Auth\AdminLoginController@login')->name('admin.login.submit');
+    Route::get('logout/', 'Auth\AdminLoginController@logout')->name('admin.logout');
+    Route::get('/', 'Auth\AdminController@index')->name('admin.dashboard');
+});
