@@ -69,8 +69,12 @@ class SearchController extends Controller
         $startDate = date_create_from_format("m-d-Y", $request->input('start'));
         $endDate = date_create_from_format("m-d-Y", $request->input('end'));
         $interval = new DateInterval('P1D');
-        $periodChat = new DatePeriod($startDate, $interval, $endDate);
+        $period = new DatePeriod($startDate, $interval, $endDate);
 
+        $periodChat = array();
+        foreach ($period as $key => $value) {
+            $periodChat[] = $value->format('m-d-Y');
+        }
         return $periodChat;
     }
 }
