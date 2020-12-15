@@ -72,7 +72,7 @@ class SearchController extends Controller
         $period = new DatePeriod($startDate, $interval, $endDate);
 
         $periodChat = array();
-        foreach ($period as $key => $value) {
+        foreach ($period as $value) {
             $periodChat[] = $value->format('m-d-Y');
         }
         return $periodChat;
