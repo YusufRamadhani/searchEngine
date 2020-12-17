@@ -12,7 +12,7 @@
                         <h1>Welcome To Admin Dashboard</h1>
                     </div>
                 </div>
-                <a href="/admin/logout">Logout</a>
+                <a href="logout">Logout</a>
             </div>
             <div></div>
         </div>
