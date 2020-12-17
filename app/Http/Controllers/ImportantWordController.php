@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ImportantWord;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ImportantWordController extends Controller
 {
@@ -84,34 +85,11 @@ class ImportantWordController extends Controller
      */
     public function update(Request $request, $word)
     {
-        $importantWord = ImportantWord::where('word', $word)->first();
-
-        $importantWord->main_word = $request->main_word;
-        $importantWord->is_usage = 1;
-
-        // $importantWord->update();
-        $importantWord->save();
-
-        // 
-        return redirect()->route('importantword.index');
-
-        // $importantWord->update([
-        // 'main_word' => $request->main_word,
-        // 'is_usage' => true
-        // ]);
-
-        // $request->validate([
-        // 'word' => 'required',
-        // 'main_word' => 'required',
-        // ]);
-        // $importantWord = ImportantWord::where('word', $request->input('word'));
-        // $importantWord->main_word = $request->input('main_word');
-        // $importantWord->is_usage = 1;
-        // 
-        // 
-        // return redirect()->route('importantword.index');
-
-        return view('testing', ['data' => $importantWord]);
+        DB::table('important_word')->where('word', $word)->update([
+            'main_word' => $request->input('main_word'),
+            'is_usage' => 1
+        ]);
+        return redirect()->route('importantword.index')->with('success', 'Word updated successfully');
     }
 
     /**

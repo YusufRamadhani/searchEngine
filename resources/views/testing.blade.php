@@ -11,7 +11,6 @@
 @section('content')
 <p>This is my body content.</p>
 <br>
-<p>{{$data->word}}</p>
-<p>{{$data->is_usage}}</p>
+<?= var_dump($data); ?>
 
 @endsection
