@@ -18,7 +18,7 @@ class ImportantWord extends Model
      *
      * @var array
      */
-    protected $fillable = ['word'];
+    protected $fillable = ['word', 'main_word', 'is_usage'];
 
     /**
      * The model's default values for attributes.

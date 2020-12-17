@@ -8,7 +8,7 @@
         <div class="list-group list-group-flush collapse" id="item-1">
             <a href="{{ route('importantword.index') }}" class="list-group-item list-group-item-action bg-light">Index Important Word</a>
             <a href="{{ route('edit.importantword') }}" class="list-group-item list-group-item-action bg-light">Kelola Important Word</a>
-            <a href="" class="list-group-item list-group-item-action bg-light">Perbarui Important Word</a>
+            <a href="{{ route('importantword.create') }}" class="list-group-item list-group-item-action bg-light">Perbarui Important Word</a>
         </div>
         <a href="#" class="list-group-item list-group-item-action bg-light">Index Term</a>
     </div>

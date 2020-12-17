@@ -33,6 +33,8 @@ class ImportantWordController extends Controller
         //lalu pilih word frek x 3 && tidak ada di IW
         //tampilkan hanya pertanyan dan jumlah word dihasilkan
         // disimpan di $carryWord pass ke store()
+
+        return view('ImportantWord/createImportantWord');
     }
 
     /**
@@ -43,13 +45,25 @@ class ImportantWordController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request->ask === true) {
-            $importantWord = new ImportantWord();
-            foreach ($this->carryWord as $value) {
-                $importantWord->fill(['word' => $value]);
-            }
-            unset($this->carryWord);
+        $request->validate([
+            'word' => 'required'
+        ]);
+
+        if (!empty($request->input('main_word'))) {
+            $importantWord = new ImportantWord([
+                'word' => $request->input('word'),
+                'main_word' => $request->input('main_word'),
+                'is_usage' => 1
+            ]);
+        } else {
+            $importantWord = new ImportantWord([
+                'word' => $request->input('word'),
+                'is_usage' => 0
+            ]);
         }
+
+        $importantWord->save();
+        return redirect()->route('importantword.index');
     }
 
     /**
