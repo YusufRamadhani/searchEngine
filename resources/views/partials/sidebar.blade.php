@@ -10,6 +10,6 @@
             <a href="{{ route('edit.importantword') }}" class="list-group-item list-group-item-action bg-light">Kelola Important Word</a>
             <a href="{{ route('importantword.create') }}" class="list-group-item list-group-item-action bg-light">Perbarui Important Word</a>
         </div>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Index Term</a>
+        <a href="{{ route('index.term') }}" class="list-group-item list-group-item-action bg-light">Index Term</a>
     </div>
 </div>

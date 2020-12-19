@@ -31,6 +31,10 @@ Route::prefix('admin')->group(function () {
     Route::post('logout', 'Auth\AdminLoginController@logout')->name('logout');
     Route::get('/', 'Auth\AdminController@index')->name('admin.dashboard');
 
+    Route::get('indexterm', 'IndexController@index')->name('index.term');
+    Route::post('createterm', 'IndexController@createIndex')->name('create.term');
+    Route::post('createdoc', 'ControllerTesting@setDocument')->name('create.doc');
+
     // Route::get('index/importantword', 'ImportantWordController@index')->name('index.importantword');
     Route::get('edit/importantword', 'ImportantWordController@edit')->name('edit.importantword');
     //Route::post('/update/importantword', 'ImportantWordController@update')->name('update.importantword');

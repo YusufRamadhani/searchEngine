@@ -5,7 +5,7 @@
     <div class="container col-md-10">
         <div class="container m-auto" id="createForm">
             <div class="card">
-                <h5 class="card-header">Featured</h5>
+                <h5 class="card-header">Create Word Important</h5>
                 <div class="card-body">
                     <form method="POST" action="{{ route('importantword.store') }}">
                         @csrf

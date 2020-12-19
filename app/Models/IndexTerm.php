@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use App\Libraries\PreProcessText;
 use App\Models\Document;
 
 class IndexTerm extends Model
@@ -25,27 +27,7 @@ class IndexTerm extends Model
     public function __construct()
     {
         // fungsi ini nanti mengambil dari db
-        $document = new Document();
-        $this->document = $document->getDocument();
-    }
-
-    public function __call($method, $parameters)
-    {
-        //fungsi ini nanti akan memilih jika get tanpa tanggal akan mengambil di db
-        // dan jika get memiliki arg dateInterval akan mengolah indexTerm baru
-        if ($method == 'getIndexTerm') {
-            switch (count($parameters)) {
-                case 0:
-                    return $this->setIndexTerm($this->document); // nanti ambil di db
-                    break;
-                case 1:
-                    return $this->setIndexTermWithinPeriod($this->document, $parameters);
-                    break;
-                default:
-                    # code...
-                    break;
-            }
-        }
+        $this->document = new Document();
     }
 
     function getIndexTerm()
@@ -101,5 +83,15 @@ class IndexTerm extends Model
             }
         }
         return $indexTerm;
+    }
+
+    private static function setIndexTerm(array $document)
+    {
+        $indexTerm = array();
+        // foreach ($document as $value) {
+        // $terms = (array) new PreProcessText($value->chat);
+        // $term = array_unique($terms);
+        // }
+        return $document;
     }
 }

@@ -44,9 +44,12 @@ class SearchController extends Controller
             $indexTerm = $this->indexTerm->getIndexTermWithinPeriod($dateRange);
         } else {
             $indexTerm = $this->indexTerm->getIndexTerm();
+            // $dataIndex = IndexTerm::all(['term', 'content']);
+            //$data = json_decode($dataIndex->content, true);
+            // $indexTerm = json_decode($dataIndex, true);
         }
-        $queryTerm = $this->preProcessText->PreProcessText($query);
-        $result = $this->search->search($queryTerm, $indexTerm);
+        // $queryTerm = $this->preProcessText->PreProcessText($query);
+        // $result = $this->search->search($queryTerm, $indexTerm);
         /*langkah - langkah proses:
         1. mengambil dokumen berdasarkan tanggal
         2. buat BoW dari doc tsb
@@ -55,10 +58,18 @@ class SearchController extends Controller
         $indexTermWithinPeriod = this->indexTerm->indexTermWithinPeriod($periodChat)
         */
 
-        return view('mainpage', compact('result'));
+        // return view('mainpage', compact('result'));
+        return view('testing', ['data' => $indexTerm]);
     }
 
-    public function dateRange(Request $request)
+    private function decode($dataIndex)
+    {
+        $data = json_decode($dataIndex, true);
+        foreach ($data as $value) {
+        }
+    }
+
+    private function dateRange(Request $request)
     {
         /*
         dateRange = [
