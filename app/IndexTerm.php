@@ -13,10 +13,6 @@ class IndexTerm extends Model
      */
     protected $table = 'index_term';
 
-    protected $casts = [
-        'content' => 'array'
-    ];
-
     /**
      * The attributes that are mass assignable.
      *

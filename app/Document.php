@@ -37,7 +37,7 @@ class Document extends Model
 
     private function getLogLiveChatId()
     {
-        return DB::table('datachat')->select('loglivechatid')->whereRaw('CHAR_LENGTH(loglivechatid)=10')->limit(5)->distinct()->get();
+        return DB::table('datachat')->select('loglivechatid')->whereRaw('CHAR_LENGTH(loglivechatid)=10')->distinct()->get();
     }
 
     private function getDate($logLiveChatId)

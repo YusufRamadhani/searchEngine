@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use DateInterval;
 use DatePeriod;
 use App\Libraries\PreProcessText;
+use App\Libraries\Decode;
 use App\IndexTerm;
 use Illuminate\Support\Facades\DB;
 
@@ -24,6 +25,7 @@ class IndexController extends Controller
     public function __construct()
     {
         $this->processText = new PreProcessText();
+        $this->decode = new Decode();
     }
 
     public function index()
@@ -35,29 +37,53 @@ class IndexController extends Controller
     {
         $daterange = $this->dateRange($request);
         $document = $this->getDocument($daterange);
+        $updated = 0;
+        $created = 0;
 
         foreach ($document as $value) {
             $terms = $this->processText->preProcessText($value->chat);
+            $filterChat = $this->processText->preProcessChat($value->chat);
             $term = array_unique($terms);
-            $filterChat = preg_replace('/[^a-zA-Z0-9 ]/', '', $value->chat);
+            $frequencyTerm = array_count_values($filterChat);
+
+            $indexedTerm = json_decode(IndexTerm::pluck('term'));
+
             foreach ($term as $subvalue) {
                 if (!empty($subvalue)) {
-                    $content = json_encode([
+                    $content = array(
                         'idDocument' => $value->id,
-                        'termFrequency' => substr_count($filterChat, $subvalue),
-                        'totalTerm' => str_word_count($filterChat)
-                    ]);
+                        'termFrequency' => $frequencyTerm[$subvalue],
+                        'totalTerms' => count($filterChat)
+                    );
+                    try {
+                        if (in_array($subvalue, $indexedTerm)) {
+                            # disini update
+                            // ambil term dan content dimana term = sub value
+                            // decode hasil pengambilan menjadi [term => content[]]
+                            // tambah content[] = content
+                            $indexTerm = IndexTerm::select('term', 'content')->where('term', $subvalue)->first();
+                            $contentArr = json_decode($indexTerm->content, true);
+                            array_push($contentArr, $content);
+                            DB::table('index_term')->where('term', $subvalue)->update(['content' => json_encode($contentArr)]);
+                            $updated += 1;
+                        } else {
+                            // # disini create
 
-                    $indexTerm = new IndexTerm([
-                        'term' => $subvalue,
-                        'content' => $content
-                    ]);
-
-                    $indexTerm->save();
+                            $indexTerm = new IndexTerm([
+                                'term' => $subvalue,
+                                'content' => json_encode(array($content))
+                            ]);
+                            $indexTerm->save();
+                            $created += 1;
+                        }
+                    } catch (\Throwable $th) {
+                    }
                 }
             }
         }
-        return redirect()->route('admin.dashboard');
+        //return redirect()->route('admin.dashboard');
+        // return view('testing', ['data' => [$inserted, $updated]]);
+        return view('testing', ['data' => [$created, $updated]]);
     }
 
     private function getDocument(array $dateRange)

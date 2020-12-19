@@ -23,6 +23,14 @@ class PreProcessText
         $this->tokenizer = $tokenizerFactory->createDefaultTokenizer();
     }
 
+    function preProcessChat(string $chat)
+    {
+        $contents = $this->caseFolding($chat);
+        $content = $this->filter($contents);
+        $stemmed = $this->stem($content);
+        return $this->tokenizer($stemmed);
+    }
+
     function preProcessText(string $chat)
     {
         $contents = $this->caseFolding($chat);

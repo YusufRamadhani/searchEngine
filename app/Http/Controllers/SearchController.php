@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Libraries\PreProcessText;
+use App\Libraries\Decode;
 use App\Models\SearchChat;
-use App\Models\IndexTerm;
+use App\IndexTerm;
 use DateInterval;
 use DatePeriod;
 
@@ -26,8 +27,8 @@ class SearchController extends Controller
     public function __construct()
     {
         $this->preProcessText = new PreProcessText();
-        $this->indexTerm = new IndexTerm();
         $this->search = new SearchChat();
+        $this->decode = new Decode();
     }
 
     function index()
@@ -43,10 +44,9 @@ class SearchController extends Controller
             $dateRange = $this->dateRange($request);
             $indexTerm = $this->indexTerm->getIndexTermWithinPeriod($dateRange);
         } else {
-            $indexTerm = $this->indexTerm->getIndexTerm();
-            // $dataIndex = IndexTerm::all(['term', 'content']);
-            //$data = json_decode($dataIndex->content, true);
-            // $indexTerm = json_decode($dataIndex, true);
+            $data = IndexTerm::all(['term', 'content']);
+            //$indexTerm = $this->decode($data);
+            $indexTerm = $this->decode->decode($data);
         }
         // $queryTerm = $this->preProcessText->PreProcessText($query);
         // $result = $this->search->search($queryTerm, $indexTerm);
@@ -59,22 +59,14 @@ class SearchController extends Controller
         */
 
         // return view('mainpage', compact('result'));
-        return view('testing', ['data' => $indexTerm]);
+        return view('testing', ['data' => $indexTerm['domain']]);
     }
 
-    private function decode($dataIndex)
-    {
-        $data = json_decode($dataIndex, true);
-        foreach ($data as $value) {
-        }
-    }
-
-    private function dateRange(Request $request)
+    public function dateRange(Request $request)
     {
         /*
-        dateRange = [
-            m-d-Y
-        ]
+        Merubah object date menjadi array dengan bentuk
+        dateRange = [ m-d-Y ]
         */
 
         $startDate = date_create_from_format("m-d-Y", $request->input('start'));
