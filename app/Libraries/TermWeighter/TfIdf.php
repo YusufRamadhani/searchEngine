@@ -5,7 +5,7 @@ namespace App\Libraries\TermWeighter;
 use App\Libraries\TermWeighter\TermFrequencies;
 use App\Libraries\TermWeighter\InverseDocumentFrequencies;
 use App\Libraries\Decode;
-use App\Models\IndexTerm;
+use App\IndexTerm;
 
 class TfIdf
 {

@@ -58,9 +58,6 @@ class IndexController extends Controller
                     try {
                         if (in_array($subvalue, $indexedTerm)) {
                             # disini update
-                            // ambil term dan content dimana term = sub value
-                            // decode hasil pengambilan menjadi [term => content[]]
-                            // tambah content[] = content
                             $indexTerm = IndexTerm::select('term', 'content')->where('term', $subvalue)->first();
                             $contentArr = json_decode($indexTerm->content, true);
                             array_push($contentArr, $content);
@@ -82,9 +79,9 @@ class IndexController extends Controller
             }
         }
         //return redirect()->route('admin.dashboard');
-        // return view('testing', ['data' => [$inserted, $updated]]);
         return view('testing', ['data' => [$created, $updated]]);
     }
+
 
     private function getDocument(array $dateRange)
     {

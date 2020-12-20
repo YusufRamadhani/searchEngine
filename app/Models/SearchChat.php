@@ -32,9 +32,12 @@ class SearchChat extends Model
         $vectorQuery = $this->tfIdf->getQueryTfIdf($queryTerm);
         $vectorDocuments = $this->tfIdf->getDocumentTfIdf($queryTerm, $indexTerm);
 
-        $indexSearched = array_map(function (array $index) use ($vectorQuery) {
-            $result = $this->cosineSimilarity->cosineSimilarity($vectorQuery, $index);
-            return $result;
+        $indexSearched = array_map(function ($index) use ($vectorQuery) {
+            try {
+                $result = $this->cosineSimilarity->cosineSimilarity($vectorQuery, $index);
+                return $result;
+            } catch (\Throwable $th) {
+            }
         }, $vectorDocuments);
 
         arsort($indexSearched);
