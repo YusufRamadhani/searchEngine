@@ -4,6 +4,7 @@ namespace App\LIbraries;
 
 use Sastrawi\Stemmer\StemmerFactory;
 use Sastrawi\Tokenizer\TokenizerFactory;
+use App\ImportantWord;
 
 class PreProcessText
 {
@@ -15,7 +16,6 @@ class PreProcessText
 
     function __construct()
     {
-
         $stemmerFactory = new StemmerFactory();
         $this->stemmer = $stemmerFactory->createStemmer();
 
@@ -23,19 +23,32 @@ class PreProcessText
         $this->tokenizer = $tokenizerFactory->createDefaultTokenizer();
     }
 
-    function preProcessText(string $chat)
+    public function preProcessChat(string $chat)
     {
         $contents = $this->caseFolding($chat);
-        $content = $this->stoplist($contents);
+        $content = $this->filter($contents);
         $stemmed = $this->stem($content);
-
-        //return an array of word stemmed
         return $this->tokenizer($stemmed);
+    }
+
+    public function preProcessText(string $chat)
+    {
+        $contents = $this->caseFolding($chat);
+        $content = $this->filter($contents);
+        $stemmed = $this->stem($content);
+        $terms = $this->tokenizer($stemmed);
+        //return an array of word stemmed
+        return $this->stoplist($terms);
     }
 
     private function caseFolding($chat)
     {
         return strtolower($chat);
+    }
+
+    private function filter(string $content)
+    {
+        return preg_replace('/[^a-zA-Z0-9 ]/', " ", $content);
     }
 
     private function stem(string $terms)
@@ -48,9 +61,18 @@ class PreProcessText
         return explode(" ", $chat);
     }
 
-    private function stoplist(string $content)
+    private function stoplist(array $terms)
     {
-        //disini nantinya fungsi stoplist ditambahkan
-        return preg_replace('/[0-9_-]/s', " ", $content);
+        // filter dg importantword where is usage 1 
+        $importantWordRaw = ImportantWord::where('is_usage', 1)->get();
+        $importantWord = array();
+        foreach ($importantWordRaw as $value) {
+            $importantWord[] = $value->word;
+        }
+        return array_map(function ($term) use ($importantWord) {
+            if (in_array($term, $importantWord)) {
+                return $term;
+            };
+        }, $terms);
     }
 }

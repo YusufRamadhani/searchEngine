@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -23,6 +23,7 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return view('admin');
+        $name = Auth::guard('admin')->user()->name;
+        return view('dashboard', ['name' => $name]);
     }
 }

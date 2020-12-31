@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Libraries\PreProcessText;
-use App\Models\SearchChat;
-use App\Models\IndexTerm;
+use App\Libraries\Decode;
+use App\SearchChat;
+use App\IndexTerm;
 use DateInterval;
 use DatePeriod;
+use Illuminate\Support\Facades\DB;
 
 
 class SearchController extends Controller
@@ -25,28 +27,43 @@ class SearchController extends Controller
 
     public function __construct()
     {
-        $this->preProcessText = new PreProcessText();
-        $this->indexTerm = new IndexTerm();
+        $this->processText = new PreProcessText();
         $this->search = new SearchChat();
+        $this->decode = new Decode();
     }
 
-    function index()
+    public function index()
     {
         return view('mainpage');
+    }
+
+    public function show($loglivechatid)
+    {
+        $dataChat = $this->search->showChat($loglivechatid);
+        return view('chatdisplay', ['result' => $dataChat]);
     }
 
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $dateRange = null;
+        $daterange = null;
         if (null !== $request->input('start')) {
-            $dateRange = $this->dateRange($request);
-            $indexTerm = $this->indexTerm->getIndexTermWithinPeriod($dateRange);
+            $daterange = $this->dateRange($request);
+            $success = $this->createIndexSearchWithDate($daterange);
+            if ($success) {
+                $data = DB::table('index_term_temporary')->select('term', 'content')->get();
+                $indexTerm = $this->decode->decode($data);
+                DB::table('index_term_temporary')->truncate();
+            }
         } else {
-            $indexTerm = $this->indexTerm->getIndexTerm();
+            $data = IndexTerm::all(['term', 'content']);
+            $indexTerm = $this->decode->decode($data);
         }
-        $queryTerm = $this->preProcessText->PreProcessText($query);
+        $queryTerm = $this->processText->PreProcessText($query);
         $result = $this->search->search($queryTerm, $indexTerm);
+
+        return $this->searchResult($result);
+
         /*langkah - langkah proses:
         1. mengambil dokumen berdasarkan tanggal
         2. buat BoW dari doc tsb
@@ -54,16 +71,59 @@ class SearchController extends Controller
 
         $indexTermWithinPeriod = this->indexTerm->indexTermWithinPeriod($periodChat)
         */
-
-        return view('mainpage', compact('result'));
     }
 
-    public function dateRange(Request $request)
+    private function searchResult($result)
+    {
+        $result = $this->search->showResult($result);
+        return view('mainpage', ['result' => $result]);
+    }
+
+    public function createIndexSearchWithDate($daterange)
+    {
+        $document = DB::table('documents')->whereIn('date', $daterange)->get();
+        foreach ($document as $value) {
+            $terms = $this->processText->preProcessText($value->chat);
+            $filterChat = $this->processText->preProcessChat($value->chat);
+            $term = array_unique($terms);
+            $frequencyTerm = array_count_values($filterChat);
+
+            $indexedTerm = json_decode(DB::table('index_term_temporary')->pluck('term'));
+
+            foreach ($term as $subvalue) {
+                if (!empty($subvalue)) {
+                    $content = array(
+                        'idDocument' => $value->id,
+                        'termFrequency' => $frequencyTerm[$subvalue],
+                        'totalTerms' => count($filterChat)
+                    );
+                    try {
+                        if (in_array($subvalue, $indexedTerm)) {
+                            # disini update
+                            $indexTerm = DB::table('index_term_temporary')->select('term', 'content')->where('term', $subvalue)->first();
+                            $contentArr = json_decode($indexTerm->content, true);
+                            array_push($contentArr, $content);
+                            DB::table('index_term_temporary')->where('term', $subvalue)->update(['content' => json_encode($contentArr)]);
+                        } else {
+                            // # disini create
+                            DB::table('index_term_temporary')->insert([
+                                'term' => $subvalue,
+                                'content' => json_encode(array($content))
+                            ]);
+                        }
+                    } catch (\Throwable $th) {
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private function dateRange(Request $request)
     {
         /*
-        dateRange = [
-            m-d-Y
-        ]
+        Merubah object date menjadi array dengan bentuk
+        dateRange = [ m-d-Y ]
         */
 
         $startDate = date_create_from_format("m-d-Y", $request->input('start'));
@@ -73,7 +133,7 @@ class SearchController extends Controller
 
         $periodChat = array();
         foreach ($period as $value) {
-            $periodChat[] = $value->format('m-d-Y');
+            $periodChat[] = $value->format('Y-m-d');
         }
         return $periodChat;
     }
