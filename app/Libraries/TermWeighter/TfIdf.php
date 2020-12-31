@@ -71,7 +71,7 @@ class TfIdf
         return $indexTFIDF;
     }
 
-    function getIndexTerm()
+    private function getIndexTerm()
     {
         // mengambil bow berdasarkan term
         // nanti ini dipindah ke controller
@@ -79,7 +79,7 @@ class TfIdf
         return $this->decode->decode($indexTerm);
     }
 
-    function getIDF(array $queryTerm)
+    private function getIDF(array $queryTerm)
     {
         // mengambil bow berdasarkan term
         // nanti ini dipindah ke controller

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,11 +17,9 @@ Route::get('/', function () {
     return view('mainpage');
 });
 
-// Route::get('/mainpage', 'ControllerTesting@index');
-// Route::post('/search', 'ControllerTesting@search');
-
 Route::get('/mainpage', 'SearchController@index');
 Route::post('/search', 'SearchController@search');
+Route::get('/show/{loglivechatid}', 'SearchController@show')->name('chat.show');
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', 'Auth\AdminLoginController@showLoginForm')->name('admin.login');
@@ -35,14 +32,9 @@ Route::prefix('admin')->group(function () {
     Route::post('createterm', 'IndexController@createIndex')->name('create.term');
     Route::post('createdoc', 'ControllerTesting@setDocument')->name('create.doc');
 
-    // Route::get('index/importantword', 'ImportantWordController@index')->name('index.importantword');
     Route::get('edit/importantword', 'ImportantWordController@edit')->name('edit.importantword');
-    //Route::post('/update/importantword', 'ImportantWordController@update')->name('update.importantword');
-    // Route::post('delete/importantword', 'ImportantWordController@destroy')->name('delete.importantword');
 });
 Route::resource('importantword', 'ImportantWordController');
 
 Route::get('register', 'Auth\RegisterController@showRegistrationForm');
 Route::post('register', 'Auth\RegisterController@register')->name('register');
-
-//Auth::routes();

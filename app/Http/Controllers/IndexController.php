@@ -78,8 +78,8 @@ class IndexController extends Controller
                 }
             }
         }
-        //return redirect()->route('admin.dashboard');
-        return view('testing', ['data' => [$created, $updated]]);
+        return redirect()->route('admin.dashboard');
+        // return view('testing', ['data' => [$created, $updated]]);
     }
 
 
@@ -88,7 +88,7 @@ class IndexController extends Controller
         return DB::table('documents')->whereIn('date', $dateRange)->get();
     }
 
-    public function dateRange(Request $request)
+    private function dateRange(Request $request)
     {
         /*
     dateRange = [

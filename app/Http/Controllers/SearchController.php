@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Libraries\PreProcessText;
 use App\Libraries\Decode;
-use App\Models\SearchChat;
+use App\SearchChat;
 use App\IndexTerm;
-use App\Document;
 use DateInterval;
 use DatePeriod;
 use Illuminate\Support\Facades\DB;
@@ -33,9 +32,15 @@ class SearchController extends Controller
         $this->decode = new Decode();
     }
 
-    function index()
+    public function index()
     {
         return view('mainpage');
+    }
+
+    public function show($loglivechatid)
+    {
+        $dataChat = $this->search->showChat($loglivechatid);
+        return view('chatdisplay', ['result' => $dataChat]);
     }
 
     public function search(Request $request)
@@ -57,6 +62,8 @@ class SearchController extends Controller
         $queryTerm = $this->processText->PreProcessText($query);
         $result = $this->search->search($queryTerm, $indexTerm);
 
+        return $this->searchResult($result);
+
         /*langkah - langkah proses:
         1. mengambil dokumen berdasarkan tanggal
         2. buat BoW dari doc tsb
@@ -64,8 +71,12 @@ class SearchController extends Controller
 
         $indexTermWithinPeriod = this->indexTerm->indexTermWithinPeriod($periodChat)
         */
+    }
 
-        return view('mainpage', compact('result'));
+    private function searchResult($result)
+    {
+        $result = $this->search->showResult($result);
+        return view('mainpage', ['result' => $result]);
     }
 
     public function createIndexSearchWithDate($daterange)
@@ -108,7 +119,7 @@ class SearchController extends Controller
         return true;
     }
 
-    public function dateRange(Request $request)
+    private function dateRange(Request $request)
     {
         /*
         Merubah object date menjadi array dengan bentuk

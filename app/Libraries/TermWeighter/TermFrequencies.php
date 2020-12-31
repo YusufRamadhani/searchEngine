@@ -4,25 +4,6 @@ namespace App\Libraries\TermWeighter;
 
 class TermFrequencies
 {
-    public function termFrekuensi(array $indexTerm)
-    {
-        /*
-        fungsi lib ini akan membuat indeks Normalized Term Frequencies
-        input : indexTerm & queryTerm
-        output termFrequencies = [
-            idDocument =>[
-                term =>
-                normalizedTermFrequencies =>
-            ]
-        ]
-
-        menghitung Normalized Term Frequencies = total term[i] / total term in document
-        */
-
-        return array_map(function () {
-        }, $indexTerm);
-    }
-
     public function termFrequenciesQuery(array $queryTerm)
     {
         return array_map(function (string $term) use ($queryTerm) {

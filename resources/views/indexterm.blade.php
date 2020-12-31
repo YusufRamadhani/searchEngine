@@ -3,9 +3,9 @@
 @section('content')
 <div class="container col-md-10">
     <div class="card m-auto">
-        <h5 class="card-header">Index Term</h5>
+        <h5 class="card-header">Indeks</h5>
         <div class="card-body">
-            <p class="font-weight-light">Masukkan rentang waktu chat yang ingin di buatkan index <br></p>
+            <p class="font-weight-light">Masukkan rentang waktu chat yang ingin di buatkan indeks <br></p>
             <form action="{{ route('create.term') }}" method="post">
                 {{ csrf_field() }}
 

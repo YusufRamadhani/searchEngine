@@ -37,15 +37,15 @@
 
             @isset($result)
             <ul class="list-group list-group-flush">
-                @foreach($result as $key => $value)
-                <li class="list-group-item">
-                    <h3>{{$key}}</h3>
-                    <p>{{$value}}</p>
-                </li>
+                @foreach($result as $value)
+                <a href="{{ route('chat.show',['loglivechatid' => $value['id']]) }}" class="list-group-item list-group-item-action">
+                    <p class="mb-1">{{$value['chat']}}</p>
+                    <small class="text-muted">{{ $value['date'] }} &nbsp; visitor: {{ $value['visitor'] }} &nbsp; score: {{ $value['score'] }}</small>
+                </a>
                 @endforeach
             </ul>
             @endisset
-
+            <!-- buat pagination -->
         </div>
     </div>
 </div>
