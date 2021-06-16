@@ -15,14 +15,13 @@ class Document extends Model
      */
     protected $table = 'documents';
 
-    function setDocumet()
+    function setDocument(array $daterange)
     {
-        $log = $this->getLogLiveChatId();
+        $log = $this->getLogLiveChatId($daterange);
         try {
             foreach ($log as $value) {
                 $date = $this->getDate($value->loglivechatid);
                 $chat = $this->getChat($value->loglivechatid);
-
                 DB::table('documents')->insertOrIgnore([
                     'loglivechatid' => $value->loglivechatid,
                     'date' => $date,
@@ -35,9 +34,9 @@ class Document extends Model
         return 'success';
     }
 
-    private function getLogLiveChatId()
+    private function getLogLiveChatId($daterange)
     {
-        return DB::table('datachat')->select('loglivechatid')->whereRaw('CHAR_LENGTH(loglivechatid)=10')->distinct()->get();
+        return DB::table('datachat')->select('loglivechatid')->whereBetween('date', $daterange)->distinct()->get();
     }
 
     private function getDate($logLiveChatId)

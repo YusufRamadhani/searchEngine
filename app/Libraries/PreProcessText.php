@@ -37,8 +37,7 @@ class PreProcessText
         $content = $this->filter($contents);
         $stemmed = $this->stem($content);
         $terms = $this->tokenizer($stemmed);
-        //return an array of word stemmed
-        return $this->stoplist($terms);
+        return $this->synonym($terms);
     }
 
     private function caseFolding($chat)
@@ -48,7 +47,8 @@ class PreProcessText
 
     private function filter(string $content)
     {
-        return preg_replace('/[^a-zA-Z0-9 ]/', " ", $content);
+        // pikir ulang filter angka apa perlu karena kode 404 505 503 juga bermakna di chat
+        return preg_replace('/[^a-zA-Z0-9]/', " ", $content);
     }
 
     private function stem(string $terms)
@@ -61,18 +61,14 @@ class PreProcessText
         return explode(" ", $chat);
     }
 
-    private function stoplist(array $terms)
+    private function synonym(array $terms)
     {
-        // filter dg importantword where is usage 1 
-        $importantWordRaw = ImportantWord::where('is_usage', 1)->get();
-        $importantWord = array();
-        foreach ($importantWordRaw as $value) {
-            $importantWord[] = $value->word;
-        }
-        return array_map(function ($term) use ($importantWord) {
-            if (in_array($term, $importantWord)) {
-                return $term;
-            };
+        return array_map(function ($term) {
+            if (ImportantWord::where('word', '=', $term)->where('is_usage', 1)->exists()) {
+                $mainWord = ImportantWord::select('main_word')->where('word', $term)->first();
+                return $mainWord->main_word;
+            }
+            return $term;
         }, $terms);
     }
 }

@@ -59,6 +59,7 @@ class SearchController extends Controller
             $data = IndexTerm::all(['term', 'content']);
             $indexTerm = $this->decode->decode($data);
         }
+        // query disini nanti diperbaiki menggunakan preprocesschat
         $queryTerm = $this->processText->PreProcessText($query);
         $result = $this->search->search($queryTerm, $indexTerm);
 
@@ -81,12 +82,13 @@ class SearchController extends Controller
 
     public function createIndexSearchWithDate($daterange)
     {
+        ini_set('max_execution_time', 0);
         $document = DB::table('documents')->whereIn('date', $daterange)->get();
         foreach ($document as $value) {
             $terms = $this->processText->preProcessText($value->chat);
-            $filterChat = $this->processText->preProcessChat($value->chat);
             $term = array_unique($terms);
-            $frequencyTerm = array_count_values($filterChat);
+            $frequencyTerm = array_count_values($terms);
+            $totalTerms = count($terms);
 
             $indexedTerm = json_decode(DB::table('index_term_temporary')->pluck('term'));
 
@@ -95,7 +97,7 @@ class SearchController extends Controller
                     $content = array(
                         'idDocument' => $value->id,
                         'termFrequency' => $frequencyTerm[$subvalue],
-                        'totalTerms' => count($filterChat)
+                        'totalTerms' => $totalTerms
                     );
                     try {
                         if (in_array($subvalue, $indexedTerm)) {

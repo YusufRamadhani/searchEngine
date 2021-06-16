@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use DateInterval;
-use DatePeriod;
 use App\Libraries\PreProcessText;
 use App\Libraries\Decode;
 use App\IndexTerm;
+use App\Document;
 use Illuminate\Support\Facades\DB;
 
+ini_set('max_execution_time', 0);
 class IndexController extends Controller
 {
     /*
@@ -26,6 +26,7 @@ class IndexController extends Controller
     {
         $this->processText = new PreProcessText();
         $this->decode = new Decode();
+        $this->document = new Document();
     }
 
     public function index()
@@ -36,16 +37,18 @@ class IndexController extends Controller
     public function createIndex(Request $request)
     {
         $daterange = $this->dateRange($request);
-        $document = $this->getDocument($daterange);
+        $setDocument = $this->document->setDocument($daterange);
+        if ($setDocument === 'success') {
+            $document = $this->getDocument($daterange);
+        }
         $updated = 0;
         $created = 0;
 
         foreach ($document as $value) {
             $terms = $this->processText->preProcessText($value->chat);
-            $filterChat = $this->processText->preProcessChat($value->chat);
             $term = array_unique($terms);
-            $frequencyTerm = array_count_values($filterChat);
-
+            $frequencyTerm = array_count_values($terms);
+            $totalTerms = count($terms);
             $indexedTerm = json_decode(IndexTerm::pluck('term'));
 
             foreach ($term as $subvalue) {
@@ -53,19 +56,21 @@ class IndexController extends Controller
                     $content = array(
                         'idDocument' => $value->id,
                         'termFrequency' => $frequencyTerm[$subvalue],
-                        'totalTerms' => count($filterChat)
+                        'totalTerms' => $totalTerms
                     );
                     try {
                         if (in_array($subvalue, $indexedTerm)) {
                             # disini update
-                            $indexTerm = IndexTerm::select('term', 'content')->where('term', $subvalue)->first();
+                            $indexTerm = IndexTerm::where('term', $subvalue)->first();
                             $contentArr = json_decode($indexTerm->content, true);
-                            array_push($contentArr, $content);
-                            DB::table('index_term')->where('term', $subvalue)->update(['content' => json_encode($contentArr)]);
-                            $updated += 1;
+                            if (!in_array($content, $contentArr)) {
+                                array_push($contentArr, $content);
+                                $indexTerm->content = json_encode($contentArr);
+                                $indexTerm->save();
+                                $updated += 1;
+                            }
                         } else {
-                            // # disini create
-
+                            # disini create
                             $indexTerm = new IndexTerm([
                                 'term' => $subvalue,
                                 'content' => json_encode(array($content))
@@ -73,36 +78,28 @@ class IndexController extends Controller
                             $indexTerm->save();
                             $created += 1;
                         }
-                    } catch (\Throwable $th) {
+                    } catch (\Exception $e) {
+                        report($e);
                     }
                 }
             }
         }
-        return redirect()->route('admin.dashboard');
+        return redirect()->route('index.term');
         // return view('testing', ['data' => [$created, $updated]]);
     }
 
 
     private function getDocument(array $dateRange)
     {
-        return DB::table('documents')->whereIn('date', $dateRange)->get();
+        return DB::table('documents')->whereBetween('date', $dateRange)->get();
     }
 
     private function dateRange(Request $request)
     {
-        /*
-    dateRange = [
-        Y-m-d
-    ]
-    */
-        $startDate = date_create_from_format("m-d-Y", $request->input('start'));
-        $endDate = date_create_from_format("m-d-Y", $request->input('end'));
-        $interval = new DateInterval('P1D');
-        $period = new DatePeriod($startDate, $interval, $endDate);
-        $periodChat = array();
-        foreach ($period as $value) {
-            $periodChat[] = $value->format('Y-m-d');
-        }
+        $startDate = date_create($request->input('start'));
+        $endDate = date_create($request->input('end'));
+        $endDate = $endDate->modify('+1 day');
+        $periodChat = array($startDate, $endDate);
         return $periodChat;
     }
 }

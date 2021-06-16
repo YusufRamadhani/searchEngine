@@ -14,12 +14,4 @@ use App\Document;
 
 class ControllerTesting extends Controller
 {
-
-    function setDocument()
-    {
-        $document = new Document();
-        $data = $document->setDocumet();
-
-        return view('testing', ['data' => $data]);
-    }
 }
