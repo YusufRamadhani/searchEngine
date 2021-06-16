@@ -17,7 +17,7 @@
                     </div>
                     <script type="text/javascript">
                         $('.input-daterange').datepicker({
-                            format: 'mm-dd-yyyy',
+                            format: 'yyyy-mm-dd',
                             todayBtn: true,
                             daysOfWeekHighlighted: "0"
                         });
@@ -29,16 +29,16 @@
         </div>
     </div>
 
-    <div class="card">
-        <img class="card-img-top" src="holder.js/100x180/" alt="">
-        <div class="card-body">
-            <form action="{{ route('create.doc') }}" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-primary">
-                    Document
-                </button>
-            </form>
-        </div>
-    </div>
+    <!-- <div class="card"> -->
+    <!-- <img class="card-img-top" src="holder.js/100x180/" alt=""> -->
+    <!-- <div class="card-body"> -->
+    <!-- <form action="{{ route('create.doc') }}" method="POST"> -->
+    <!-- @csrf -->
+    <!-- <button type="submit" class="btn btn-primary"> -->
+    <!-- Document -->
+    <!-- </button> -->
+    <!-- </form> -->
+    <!-- </div> -->
+    <!-- </div> -->
 </div>
 @endsection

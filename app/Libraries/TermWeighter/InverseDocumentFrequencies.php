@@ -4,6 +4,7 @@ namespace App\Libraries\TermWeighter;
 
 //sementara
 use App\Document;
+use App\IndexTerm;
 
 class InverseDocumentFrequencies
 {

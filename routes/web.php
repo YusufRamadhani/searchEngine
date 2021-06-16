@@ -30,6 +30,7 @@ Route::prefix('admin')->group(function () {
 
     Route::get('indexterm', 'IndexController@index')->name('index.term');
     Route::post('createterm', 'IndexController@createIndex')->name('create.term');
+    // test setDocument
     Route::post('createdoc', 'ControllerTesting@setDocument')->name('create.doc');
 
     Route::get('edit/importantword', 'ImportantWordController@edit')->name('edit.importantword');
@@ -38,3 +39,10 @@ Route::resource('importantword', 'ImportantWordController');
 
 Route::get('register', 'Auth\RegisterController@showRegistrationForm');
 Route::post('register', 'Auth\RegisterController@register')->name('register');
+
+// Accuracy Test
+Route::get('/createTestIndex/{id}', 'AccuracyTest\IndexController_test@createIndex');
+Route::get('/mainpage/test', 'AccuracyTest\SearchController_test@index');
+Route::post('/search/test', 'AccuracyTest\SearchController_test@search');
+Route::get('/show/test/{loglivechatid}', 'AccuracyTest\SearchController_test@show')->name('chat_test.show');
+Route::get('/createIDF', 'AccuracyTest\IndexController_test@createIDF');

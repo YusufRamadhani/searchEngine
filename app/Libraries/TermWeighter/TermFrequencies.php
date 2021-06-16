@@ -28,7 +28,7 @@ class TermFrequencies
                     ];
                 }
             } else {
-                $carry = array("if cek term query di index term bernilai false");
+                // jika if salah berarti salah satu kata atau lebih dari query pencarian tidak ada
             }
         }
 
