@@ -3,7 +3,8 @@
 namespace App\Libraries\TermWeighter;
 
 //sementara
-use App\Models\Document;
+use App\Document;
+use App\IndexTerm;
 
 class InverseDocumentFrequencies
 {
@@ -20,16 +21,13 @@ class InverseDocumentFrequencies
         menghitung IDF[term] = 1 + log(total Document / total Document with term) 
         */
 
-        // nanti ini mengambil semua jumlah dokumen di db
-        $this->document = new Document();
-
         $indexIDF = array();
 
         foreach ($queryTerm as $value) {
             $idf = 0.0;
             $documentWithTerm = count($indexTerm[$value]);
-            $totalDocument = count($this->document->getDocument());
-            $idf = 1.0 + log($totalDocument / $documentWithTerm);
+            $totalDocument = Document::latest('id')->first();
+            $idf = 1.0 + log($totalDocument->id / $documentWithTerm);
             $indexIDF[$value] = $idf;
         }
 

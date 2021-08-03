@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,20 +17,32 @@ Route::get('/', function () {
     return view('mainpage');
 });
 
-// Route::get('/mainpage', 'ControllerTesting@index');
-// Route::post('/search', 'ControllerTesting@search');
-
 Route::get('/mainpage', 'SearchController@index');
 Route::post('/search', 'SearchController@search');
+Route::get('/show/{loglivechatid}', 'SearchController@show')->name('chat.show');
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', 'Auth\AdminLoginController@showLoginForm')->name('admin.login');
     Route::post('/login', 'Auth\AdminLoginController@login')->name('admin.login.submit');
-    Route::get('logout/', 'Auth\AdminLoginController@logout')->name('logout');
+    Route::get('logout', 'Auth\AdminLoginController@logout')->name('logout');
+    Route::post('logout', 'Auth\AdminLoginController@logout')->name('logout');
     Route::get('/', 'Auth\AdminController@index')->name('admin.dashboard');
+
+    Route::get('indexterm', 'IndexController@index')->name('index.term');
+    Route::post('createterm', 'IndexController@createIndex')->name('create.term');
+    // test setDocument
+    Route::post('createdoc', 'ControllerTesting@setDocument')->name('create.doc');
+
+    Route::get('edit/importantword', 'ImportantWordController@edit')->name('edit.importantword');
 });
+Route::resource('importantword', 'ImportantWordController');
 
 Route::get('register', 'Auth\RegisterController@showRegistrationForm');
 Route::post('register', 'Auth\RegisterController@register')->name('register');
 
-//Auth::routes();
+// Accuracy Test
+Route::get('/createTestIndex/{id}', 'AccuracyTest\IndexController_test@createIndex');
+Route::get('/mainpage/test', 'AccuracyTest\SearchController_test@index');
+Route::post('/search/test', 'AccuracyTest\SearchController_test@search');
+Route::get('/show/test/{loglivechatid}', 'AccuracyTest\SearchController_test@show')->name('chat_test.show');
+Route::get('/createIDF', 'AccuracyTest\IndexController_test@createIDF');

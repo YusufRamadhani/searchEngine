@@ -4,7 +4,9 @@ namespace App\Libraries\TermWeighter;
 
 use App\Libraries\TermWeighter\TermFrequencies;
 use App\Libraries\TermWeighter\InverseDocumentFrequencies;
-use App\Models\IndexTerm;
+use App\Libraries\Decode;
+use App\IndexTerm;
+use Illuminate\Support\Facades\DB;
 
 class TfIdf
 {
@@ -34,6 +36,7 @@ class TfIdf
         $this->TF = new TermFrequencies();
         $this->IDF = new InverseDocumentFrequencies();
         $this->indexTerm = new IndexTerm();
+        $this->decode = new Decode();
     }
 
     function getQueryTfIdf(array $queryTerm)
@@ -69,18 +72,12 @@ class TfIdf
         return $indexTFIDF;
     }
 
-    function getIndexTerm()
+    private function getIDF(array $queryTerm)
     {
         // mengambil bow berdasarkan term
         // nanti ini dipindah ke controller
-        return $this->indexTerm->getIndexTerm();
-    }
-
-    function getIDF(array $queryTerm)
-    {
-        // mengambil bow berdasarkan term
-        // nanti ini dipindah ke controller
-        $indexTerm = $this->getIndexTerm();
+        $index = IndexTerm::select('term', 'content')->whereIn('term', $queryTerm)->get();
+        $indexTerm = $this->decode->decode($index);
 
         return $this->IDF->inverseDocumentFrequency($indexTerm, $queryTerm);
     }
