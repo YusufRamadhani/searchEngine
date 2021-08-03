@@ -52,5 +52,6 @@ class PreProcessText
     {
         //disini nantinya fungsi stoplist ditambahkan
         return preg_replace('/[0-9_-]/s', " ", $content);
+        // \b[a-zA-Z]{1}\w
     }
 }

@@ -1,0 +1,28 @@
+version: "2"
+
+services:
+  mysql:
+    image: "mysql/mysql-server:8.0"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_USER=yrdhani
+      - MYSQL_DATABASE=searchEngine
+      - MYSQL_PASSWORD=1a2b3c45DE
+    volumes:
+      - /home/yrdhani/repos/dataset:/home/dataset
+
+  myapp:
+    tty: true
+    image: docker.io/bitnami/laravel:7-debian-10
+    environment:
+      - DB_HOST=mysql
+      - DB_USERNAME=yrdhani
+      - DB_DATABASE=searchEngine
+      - DB_PASSWORD=1a2b3c45DE
+    depends_on:
+      - mysql
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/app
+    # privileged: true # Privileged mode could be required to run this container under Windows
