@@ -1,5 +1,5 @@
 # Search Engine
-The project actually is my final year project using customer care chat as study case and dataset. The goal is build an search engine for customer care easily search chat with keyword (query) they have and find related chat.
+The project actually is my final year project using customer care chat as study case and dataset. The goal is build a search engine for customer care easily search chat with keyword (query) they have and find related chat.
 
 ## About the project
 ### Algorithm
@@ -14,14 +14,16 @@ Cosine similarity is a metric used to measure how similar the documents are irre
 
 ![image](pictures-for-readme/two-dimensional-vector.jpg) 
 
+The closer the documents are by angle, the higher is the Cosine Similarity. As you include more terms and document, it’s harder to visualize a higher dimensional space. But you can directly compute the cosine similarity using this math formula.
 
+![image](pictures-for-readme/cosine-similarity-formula.jpg)
 
+Which 'W1i' is value term 1 from document i and 'W2i' is value term 2 from document i. Therefore, I'm using TF - IDF for giving values to those variables.
 
+#### TF - IDF
 
-Cosine Similarity is algorithm to measure similarity between vectors. The calculation include measuring proximity between vectors
+For indexing every terms I'm using TF - IDF algorithm. Just like the TF - IDF stand for Term Frequency - Inverse Document Frequency. The formula calculate frequencies those term and document.
 
-Mesin Pencarian percakapan/chat menggunakan metode Cosine Similarity dan TF-IDF.
+### Programming language
 
-Pencarian dilakukan dengan membandingkan chat yang paling mirip dengan query yang dimasukkan. Perhitungan kemiripan menggunakan cosine similarity. Dimana tingkat kemiripan antara dua buah objek atau berkas chat dengan query dinyatakan dalam vektor. Sehingga sudut nilai cosine dari kedua vektor menyatakan seberapa mirip antara kedua berkas.
-
-Sebuah nilai vektor dari berkas yang berupa kumpulan kalimat dan kata di diapat dengan metode TF-IDF. Metode ini menghitung frekuensi kata pada berkas.
+This project I'm using PHP to cover the website as platform search engine and calculate the algorithm. I know it's not ideal for using PHP to calculate complex algorithm. But, in the other side I can build the algorithm from scratch and implement it firsthand. ( It's also challenge from my supervising professors )
