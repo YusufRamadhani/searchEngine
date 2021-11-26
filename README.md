@@ -12,7 +12,7 @@ The search engine is implementing Cosine Similarity which measure similarity bet
 
 Cosine similarity is a metric used to measure how similar the documents are irrespective of their size. Mathematically, it measures the cosine of the angle between two vectors projected in a multi-dimensional space. So, if you have three documents (chat for this case) and querying two terms (keyword for this case). The ilustration for vectors in two dimensional will be something like this.
 
-
+![image](pictures-for-readme/two-dimensional-vector.jpg) 
 
 
 
