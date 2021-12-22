@@ -1,5 +1,6 @@
 # Search Engine
 The project is my final year project using customer care chat as a study case and dataset. The goal is to build a search engine for customer care easily search chat with keyword (query) they have and find related chat.
+For implementation algorithm you could see in `app/Libraries/`
 
 ## About the project
 ### Algorithm
